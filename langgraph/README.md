@@ -70,12 +70,42 @@ Basic agent with a calculator tool - demonstrates fundamental LangGraph concepts
 python simple_agent.py
 ```
 
-**What it demonstrates:**
+**Graph Flow:**
 ```
-START → Agent (decides) → Tool? → END
-              ↓           ↓
-              └───────────┘
-                (loop back if tool needed)
+┌─────────┐
+│  START  │
+└────┬────┘
+     │
+     ▼
+┌─────────┐
+│  agent  │ ◄─────┐
+└────┬────┘       │
+     │            │
+     ├─ No tool needed
+     │            │
+     ├─ Tool needed
+     │            │
+     ▼            │
+┌─────────┐      │
+│  tools  │──────┘
+└─────────┘
+     │
+     ▼
+┌─────────┐
+│   END   │
+└─────────┘
+```
+
+**Example Output:**
+```
+🧑 User: What is 123 * 456?
+  🤔 Agent thinking...
+  🔧 Agent decided to use tool: calculator
+  🧮 Executing calculator with: 123 * 456
+  ✓ Calculator result: 56088
+  🤔 Agent thinking...
+  💬 Agent answering directly (no tool needed)
+🤖 Agent: 123 * 456 = 56,088
 ```
 
 ### 2. Multi-Tools Agent (`multi_tools_agent.py`)
@@ -84,6 +114,33 @@ Agent with multiple tools showcasing more complex decision-making.
 **Run:**
 ```bash
 python multi_tools_agent.py
+```
+
+**Graph Flow:**
+```
+┌─────────┐
+│  START  │
+└────┬────┘
+     │
+     ▼
+┌─────────┐
+│  agent  │ ◄─────┐
+└────┬────┘       │
+     │            │
+     ├─ Decides which tool
+     │            │
+     ▼            │
+┌─────────┐      │
+│  tools  │──────┘
+│ • Tool1 │
+│ • Tool2 │
+│ • Tool3 │
+└─────────┘
+     │
+     ▼
+┌─────────┐
+│   END   │
+└─────────┘
 ```
 
 ### 3. Agent with Web Search (`agent_with_tavily_search.py`)
@@ -98,6 +155,70 @@ Full-featured agent with calculator AND Tavily web search.
 **Run:**
 ```bash
 python agent_with_tavily_search.py
+```
+
+**Graph Flow:**
+```
+┌─────────┐
+│  START  │
+└────┬────┘
+     │
+     ▼
+┌──────────────┐
+│    agent     │ ◄─────────┐
+│  (decides)   │           │
+└──────┬───────┘           │
+       │                   │
+       ├─ Calculator needed │
+       │                   │
+       ├─ Web search needed │
+       │                   │
+       ├─ Direct answer    │
+       │                   │
+       ▼                   │
+┌──────────────┐           │
+│    tools     │───────────┘
+│              │
+│ 🧮 calculator│
+│ 🔍 web_search│
+└──────────────┘
+       │
+       ▼
+┌─────────┐
+│   END   │
+└─────────┘
+```
+
+**Example Outputs:**
+
+**Math Query:**
+```
+🧑 User: What is 456 * 789?
+  🤔 Agent thinking...
+  🔧 Agent decided to use tool: calculator
+  🧮 Executing calculator with: 456 * 789
+  ✓ Calculator result: 359784
+  🤔 Agent thinking...
+  💬 Agent answering directly (no tool needed)
+🤖 Agent: 456 * 789 = 359,784
+```
+
+**Web Search Query:**
+```
+🧑 User: What are the latest developments in AI agents in 2025?
+  🤔 Agent thinking...
+  🔧 Agent decided to use tool: web_search
+  🤔 Agent thinking...
+  💬 Agent answering directly (no tool needed)
+🤖 Agent: [Comprehensive answer with latest AI agent developments...]
+```
+
+**General Knowledge (No Tool):**
+```
+🧑 User: What is the capital of Japan?
+  🤔 Agent thinking...
+  💬 Agent answering directly (no tool needed)
+🤖 Agent: Tokyo.
 ```
 
 **Example queries:**
